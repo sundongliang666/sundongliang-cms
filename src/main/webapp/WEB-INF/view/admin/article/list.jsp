@@ -136,7 +136,10 @@
 		 
 		refreshPage();
 	})
-	$('#complainModal').on('hidden.bs.modal', function (e) {
+	$('#complainModal
+			
+			
+			').on('hidden.bs.modal', function (e) {
 		  // do something...
 		 
 		refreshPage();
