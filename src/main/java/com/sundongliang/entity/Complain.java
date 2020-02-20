@@ -1,17 +1,19 @@
 package com.sundongliang.entity;
 
+import java.io.Serializable;
 import java.util.Date;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.NotBlank;
 
 /**
  * 
- * @author
+ * @author zhuzg
  *
  */
-public class Complain {
+public class Complain implements Serializable{
 	
 	private Integer id               ;
 	

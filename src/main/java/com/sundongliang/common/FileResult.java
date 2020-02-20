@@ -2,7 +2,7 @@ package com.sundongliang.common;
 
 /**
  * 
- * @author 
+ * @author zhuzg
  *
  */
 public class FileResult {
@@ -16,13 +16,6 @@ public class FileResult {
 	int error=0;
 	String url="";
 	
-	
-	
-	@Override
-	public String toString() {
-		return "FileResult [error=" + error + ", url=" + url + "]";
-	}
-
 	public FileResult() {
 		super();
 	}

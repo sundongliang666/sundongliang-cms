@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="com.sundongliang.mapper.LockedMapper">
+  
+  <resultMap type="com.sundongliang.entity.Article" id="articleMapper">
+		<result property="channelId" column="channel_id"/>
+		<result property="categoryId" column="category_id"/>
+		<result property="userId" column="user_id"/>
+		<result property="content" column="content"/>
+		<result property="picture" column="picture"/>
+		
+		<association property="channel" column="channel_id" javaType="com.sundongliang.entity.Channel" 
+		   select="findChannel"></association>
+		<association property="category" column="category_id" javaType="com.sundongliang.entity.Category" 
+		   select="findCatigory"></association>
+	</resultMap>
+		
+	<select id="getArticle" resultMap="articleMapper">
+		SELECT id,title,channel_id,category_id,user_id,content,picture, created,status,hot
+		  FROM cms_article where   deleted=0 and status=#{value}
+		  ORDER BY id DESC  
+	</select>
+	<select id="getArticleqc" resultMap="articleMapper">
+	SELECT id,title,channel_id,category_id,user_id,content,picture, created,status,hot
+		  FROM cms_article where   deleted=0
+		  ORDER BY id DESC
+	</select>
+	
+	
+	<!-- 获取频道 -->
+	<select id="findChannel" resultType="channel">
+		SELECT id,name FROM cms_channel WHERE id=#{value}
+	</select>
+	
+	<!-- 获取分类 -->
+	<select id="findCatigory" resultType="category">
+		SELECT id,name FROM cms_category WHERE id=#{value}
+	</select>
+	
+	<select id="getInfoById" resultMap="articleMapper">
+	SELECT id,title,channel_id,category_id,user_id,content,picture, created,status,hot
+		  FROM cms_article where id=#{value}
+	</select>
+  
+  </mapper>

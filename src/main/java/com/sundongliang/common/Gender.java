@@ -2,7 +2,7 @@ package com.sundongliang.common;
 
 /**
  * 性别
- * @author 
+ * @author zhuzg
  *
  */
 public enum Gender {

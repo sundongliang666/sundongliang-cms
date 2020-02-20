@@ -1,48 +1,34 @@
 package com.sundongliang.mapper;
 
-import javax.validation.Valid;
-
 import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import com.sundongliang.entity.User;
 
-
-/**
- * 
- * @author 
- *
- */
 public interface UserMapper {
 
 	/**
-	 * 根据用户名查找用户
+	 * 
 	 * @param username
 	 * @return
 	 */
-	@Select(" SELECT id,username,password FROM cms_user "
-			+ " WHERE username = #{value} limit 1")
-	User findUserByName(String username);
+	@Select("SELECT id,username,`password` FROM cms_user WHERE username=#{username} LIMIT 1")
+	User getUserName(String username);
 
 	/**
-	 * 添加用户
+	 * 
 	 * @param user
 	 * @return
 	 */
 	@Insert("INSERT INTO cms_user(username,password,locked,create_time,score,role)"
 			+ " VALUES(#{username},#{password},0,now(),0,0)")
-	int add(@Valid User user);
+	int registerUser(User user);
 
-	/**
-	 *根据用户名和密码查询用户 登录操作 
-	 * @param user
-	 * @return
-	 */
-	@Select("SELECT id,username,password,nickname,birthday,"
-			+ "gender,locked,create_time createTime,update_time updateTime,url,"
-			+ "role FROM cms_user WHERE username=#{username}  AND password = #{password} "
-			+ " LIMIT 1")
-	User findByPwd(User user);
-	
+	@Select("SELECT * FROM cms_user WHERE username=#{username} and password=#{password} LIMIT 1")
+	User setPassword(User user);
+
+	@Select("SELECT * FROM cms_user WHERE username=#{name} and password=#{pwwd} LIMIT 1")
+	User getToUser(@Param("name")String name,@Param("pwwd") String pwwd);
 
 }

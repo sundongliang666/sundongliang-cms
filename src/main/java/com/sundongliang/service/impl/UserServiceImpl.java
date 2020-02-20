@@ -1,6 +1,7 @@
 package com.sundongliang.service.impl;
 
-import javax.validation.Valid;
+
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,40 +11,47 @@ import com.sundongliang.entity.User;
 import com.sundongliang.mapper.UserMapper;
 import com.sundongliang.service.UserService;
 
+
 /**
  * 
- * @author 
+ * @author ASUS
  *
  */
 @Service
-public class UserServiceImpl implements UserService{
-	
+public class UserServiceImpl implements UserService {
+
 	@Autowired
-	UserMapper userMapper;
-
-	@Override
-	public User getUserByUsername(String username) {
-		// TODO Auto-generated method stub
-		return userMapper.findUserByName(username);
-	}
-
-	@Override
-	public int register(@Valid User user) {
-		// TODO Auto-generated method stub
-		// 计算密文
-		String encryPwd = CmsUtils.encry(user.getPassword(),user.getUsername());
-		
-		user.setPassword(encryPwd);
-		return userMapper.add(user);
-	}
-
+	UserMapper ma;
 	
+	/**
+	 * 
+	 */
 	@Override
-	public User login(User user) {
+	public User getUserName(String username) {
 		// TODO Auto-generated method stub
-		user.setPassword(CmsUtils.encry(user.getPassword(), user.getUsername() ));
-		User loginUser  = userMapper.findByPwd(user);
-		return loginUser;
+		return ma.getUserName(username);
+	}
+
+	/**
+	 * 
+	 */
+	@Override
+	public int registerUser(User user) {
+		user.setPassword(CmsUtils.encry(user.getPassword(), user.getUsername()));
+		return ma.registerUser(user);
+	}
+
+	@Override
+	public User getUser(User user) {
+		user.setPassword(CmsUtils.encry(user.getPassword(), user.getUsername()));
+		return ma.setPassword(user);
+	}
+
+	@Override
+	public User getToUser(String name, String pwd) {
+		String pwwd = CmsUtils.encry(pwd, name);
+		
+		return ma.getToUser(name,pwwd);
 	}
 
 }

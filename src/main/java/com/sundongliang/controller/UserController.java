@@ -1,165 +1,187 @@
 package com.sundongliang.controller;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+
+
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 
-import com.github.pagehelper.PageInfo;
-import com.sundongliang.cms.utils.HtmlUtils;
+
+
+
+
+
+
+
+
+
+
+
+
 import com.sundongliang.cms.utils.StringUtils;
-import com.sundongliang.common.CmsContant;
-import com.sundongliang.entity.Article;
-import com.sundongliang.entity.Category;
-import com.sundongliang.entity.Channel;
+import com.sundongliang.common.CmsMessage;
 import com.sundongliang.entity.User;
-import com.sundongliang.service.ArticleService;
+import com.sundongliang.momme.Cms;
 import com.sundongliang.service.UserService;
-
-
 /**
  * 
- * @author 
+ * @author ASUS
  *
  */
 @Controller
-@RequestMapping("user")
-public class UserController  extends BaseController {
-	
-	
-	
-	//public native void test();  .dll
+@RequestMapping("/user")
+public class UserController {
+
 	@Autowired
-	UserService userService;
+	UserService ser;
 	
-	@Autowired
-	ArticleService   articleService;
 	
-	@RequestMapping("home")
-	public String home() {
-		return "user/home";
-	}
 	
-	@RequestMapping("logout")
-	public String home(HttpServletRequest request,HttpServletResponse response) {
-		request.getSession().removeAttribute(CmsContant.USER_KEY);
-		
-		
-		Cookie cookieUserName = new Cookie("username", "");
-		cookieUserName.setPath("/");
-		cookieUserName.setMaxAge(0);// 立即过期
-		response.addCookie(cookieUserName);
-		Cookie cookieUserPwd = new Cookie("userpwd", "");
-		cookieUserPwd.setPath("/");
-		cookieUserPwd.setMaxAge(0);// 立即过期
-		response.addCookie(cookieUserPwd);
+	
+	
+	
+	
+	/**
+	 * index
+	 */
+	@RequestMapping("index")
+	public String index(){
 		
 		return "redirect:/";
 	}
 	
+	
+	
 	/**
-	 * 跳转到注册界面
-	 * @param request
+	 * 去往注册页面
+	 * @param m
 	 * @return
 	 */
-	@RequestMapping(value="register",method=RequestMethod.GET)
-	public String register(HttpServletRequest request) {
-		User user  = new User();
-		request.setAttribute("user", user);
-		return "user/register";
+	@RequestMapping(value="/register",method=RequestMethod.GET)
+	public String home(Model m){
+		m.addAttribute("user", new User());
+		return "/user/register";
 	}
 	
 	/**
-	 * 从注册页面发过来的请求
-	 * @param request
+	 * 进行用户注册
+	 * @param user
+	 * @param result
 	 * @return
 	 */
-	@RequestMapping(value="register",method=RequestMethod.POST)
-	public String register(HttpServletRequest request,
-			@Valid @ModelAttribute("user") User user,
-			BindingResult result
-			) {
-		
-		// 有错误返回到注册页面
-		if(result.hasErrors()) {
-			return "user/register";
+	@RequestMapping(value="/register",method=RequestMethod.POST)
+	public String register(@Valid @ModelAttribute("user") User user,BindingResult result,Model m){
+		System.out.println(1);
+		User u=ser.getUserName(user.getUsername());
+		if(u!=null){
+			result.rejectValue("username", "", "用户名已存在");
 		}
-		
-		//进行唯一性验证
-		User existUser = userService.getUserByUsername(user.getUsername());
-		if(existUser!=null) {
-			result.rejectValue("username", "", "用户名已经存在");
-			return "user/register";
+		if(StringUtils.isNumber(user.getPassword())){
+			result.rejectValue("password", "", "密码太简单了");
 		}
-				
-		//加一个手动的校验
-		if(StringUtils.isNumber(user.getPassword())) {
-			result.rejectValue("passowrd", "", "密码不能全是数字");
-			return "user/register";
+		if(result.hasErrors()){
+			m.addAttribute("user", user);
+			return "/user/register";
 		}
-		
-		// 去注册
-		int reRegister = userService.register(user);
-		
-		//注册失败
-		if(reRegister<1) {
-			request.setAttribute("eror", "注册失败，请稍后再试！");
-			return "user/register";
+		int i =ser.registerUser(user);
+		if(i<1){
+			result.rejectValue("id", "", "注册失败，请稍后再试");
+			return "/user/register";
 		}
-		
-		//跳转到登录页面
-		return "redirect:login";
+		return "redirect:/user/login";
 	}
 	
 	/**
-	 * 跳转登录册界面
-	 * @param request
+	 * 进行姓名认证
+	 * @param username
 	 * @return
 	 */
-	@RequestMapping(value="login",method=RequestMethod.GET)
-	public String login(HttpServletRequest request) {
-		return "user/login";
+	@RequestMapping("/checkname")
+	@ResponseBody
+	public Object checkname(String username){
+		User u=ser.getUserName(username);
+		return u==null;
 	}
 	
 	
+	
 	/**
-	 * 接受登录界面的请求
-	 * @param request
+	 * 
+	 * @param m
 	 * @return
 	 */
-	@RequestMapping(value="login",method=RequestMethod.POST)
-	public String login(HttpServletRequest request,HttpServletResponse response, User user) {
-		String pwd =  new String(user.getPassword());
-		User loginUser = userService.login(user);
+	@RequestMapping(value="/login",method=RequestMethod.GET)
+	public String login(Model m,HttpServletResponse response,HttpServletRequest request){
 		
-		//登录失败
-		if(loginUser==null) {
-			request.setAttribute("error", "用户名密码错误");
-			return "/user/login";	
+		m.addAttribute("user", new User());
+		return "/user/login";
+	}
+	
+	
+	
+	
+	/**
+	 * 
+	 * @param user
+	 * @param result
+	 * @param m
+	 * @param session
+	 * @return
+	 */
+	@RequestMapping(value="/login",method=RequestMethod.POST)
+	public String login(@Valid @ModelAttribute("user") User user,
+			BindingResult result,
+			Model m,
+			HttpSession session,
+			HttpServletResponse response,
+			@RequestParam(defaultValue="0")int ck){
+		String pwd = user.getPassword();
+		if(result.hasErrors()){
+			m.addAttribute("user", user);
+			return "/user/login";
 		}
-		
-		// 登录成功，用户信息存放看到session当中
-		
-		request.getSession().setAttribute(CmsContant.USER_KEY, loginUser);
-		
+		User  u =ser.getUser(user);
+		if(u==null){
+			result.rejectValue("id", "", "登录失败，用户名或密码错误");
+			return "/user/login";
+		}
+		if(ck==2){
 		//保存用户的用户名和密码
 		Cookie cookieUserName = new Cookie("username", user.getUsername());
 		cookieUserName.setPath("/");
@@ -169,183 +191,78 @@ public class UserController  extends BaseController {
 		cookieUserPwd.setPath("/");
 		cookieUserPwd.setMaxAge(10*24*3600);// 10天
 		response.addCookie(cookieUserPwd);
+		}
 		
 		
-		
-		// 进入管理界面
-		if(loginUser.getRole()==CmsContant.USER_ROLE_ADMIN)
-			 return "redirect:/admin/index";	
-		
-		
-		// 进入个人中心
+		session.setAttribute(Cms.USER, u);
+		if(u.getLocked()==0)
 		return "redirect:/user/home";
 		
 		
+		return "redirect:/user/admin";
+	}
+	/**
+	 * 
+	 */
+	@RequestMapping("/admin")
+	public String admin(){
 		
-		
-		
+		return "/user/admin/locked";
 	}
 	
 	
 	
 	/**
 	 * 
-	 * @param username
 	 * @return
 	 */
-	@RequestMapping("checkname")
+	@RequestMapping("/home")
+	public String home(){
+		
+		return "/user/home";
+	}
+	
+	
+	
+	
+	
+	
+	/**
+	 * exit
+	 */
+	@RequestMapping("/exit")
+	public String exit(HttpSession session,HttpServletResponse response){
+		session.removeAttribute(Cms.USER);
+		Cookie cookieUserName = new Cookie("username", "");
+		cookieUserName.setPath("/");
+		cookieUserName.setMaxAge(0);// 立即过期
+		response.addCookie(cookieUserName);
+		Cookie cookieUserPwd = new Cookie("userpwd", "");
+		cookieUserPwd.setPath("/");
+		cookieUserPwd.setMaxAge(0);// 立即过期
+		response.addCookie(cookieUserPwd);
+		return "redirect:/user/login";
+	}
+	/**
+	 * tologin
+	 */
+	@RequestMapping("/tologin")
 	@ResponseBody
-	public boolean checkUserName(String username) {
-		User existUser = userService.getUserByUsername(username);
-		return existUser==null;
-	}
-	
-	/**
-	 * 
-	 * @param username
-	 * @return
-	 */
-	@RequestMapping("deletearticle")
-	@ResponseBody
-	public boolean deleteArticle(int id) {
-		int result  = articleService.delete(id);
-		return result > 0;
-	}
-	
-	
-	@RequestMapping("articles")
-	public String articles(HttpServletRequest request,@RequestParam(defaultValue="1") int page) {
-		
-		User loginUser = (User)request.getSession().getAttribute(CmsContant.USER_KEY);
-		
-		PageInfo<Article> articlePage = articleService.listByUser(loginUser.getId(),page);
-		
-		request.setAttribute("articlePage", articlePage);
-		
-		return "user/article/list";
-	}
-	
-	@RequestMapping("comments")
-	public String comments() {
-		return "user/comment/list";
-	}
-	
-	/**
-	 * 跳转到发布文章的页面
-	 * @return
-	 */
-	@RequestMapping("postArticle")
-	public String postArticle(HttpServletRequest request) {	
-		List<Channel> channels= articleService.getChannels();
-		request.setAttribute("channels", channels);
-		return "user/article/post";
-	}
-	
-	/**
-	 * 跳转到修改文章的页面
-	 * @return
-	 */
-	@RequestMapping(value="updateArticle",method=RequestMethod.GET)
-	public String updateArticle(HttpServletRequest request,int id) {	
-		
-		//获取栏目
-		List<Channel> channels= articleService.getChannels();
-		request.setAttribute("channels", channels);
-		
-		//获取文章
-		Article article = articleService.getById(id);
-		User loginUser = (User)request.getSession().getAttribute(CmsContant.USER_KEY);
-		if(loginUser.getId() != article.getUserId()) {
-			// todo 准备做异常处理的！！
+	public CmsMessage tologin(String name,String pwd,HttpServletRequest request,HttpServletResponse response){
+		User user = ser.getToUser(name,pwd);
+		if(user==null){
+			return  new CmsMessage(Cms.NOT_EXIST, "用户名或密码错误", "");
 		}
-		request.setAttribute("article", article);
-		request.setAttribute("content1",  HtmlUtils.htmlspecialchars(article.getContent()));
-		
-		
-		return "user/article/update";
+		request.getSession().setAttribute(Cms.USER, user);
+			//保存用户的用户名和密码
+				Cookie cookieUserName = new Cookie("username", user.getUsername());
+				cookieUserName.setPath("/");
+				cookieUserName.setMaxAge(10*24*3600);// 10天
+				response.addCookie(cookieUserName);
+				Cookie cookieUserPwd = new Cookie("userpwd", pwd);
+				cookieUserPwd.setPath("/");
+				cookieUserPwd.setMaxAge(10*24*3600);// 10天
+				response.addCookie(cookieUserPwd);
+		 return  new CmsMessage(Cms.SUCCESS, "", "登录成功");
 	}
-	
-	/**
-	 *  获取分类
-	 * @param request
-	 * @param cid
-	 * @return
-	 */
-	@RequestMapping("getCategoris")
-	@ResponseBody
-	public List<Category>  getCategoris(int cid) {	
-		List<Category> categoris = articleService.getCategorisByCid(cid);
-		return categoris;
-	}
-	
-	/**
-	 * 
-	 * @param request
-	 * @param article
-	 * @param file
-	 * @return
-	 */
-	@RequestMapping(value = "postArticle",method=RequestMethod.POST)
-	@ResponseBody
-	public boolean postArticle(HttpServletRequest request, Article article, 
-			MultipartFile file
-			) {
-		
-		
-		String picUrl;
-		try {
-			// 处理上传文件
-			picUrl = processFile(file);
-			article.setPicture(picUrl);
-		} catch (IllegalStateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		//当前用户是文章的作者
-		User loginUser = (User)request.getSession().getAttribute(CmsContant.USER_KEY);
-		article.setUserId(loginUser.getId());
-		
-		
-		return articleService.add(article)>0;
-	}
-	
-	/**
-	 * 接受修改文章的页面提交的数据
-	 * @return
-	 */
-	@RequestMapping(value="updateArticle",method=RequestMethod.POST)
-	@ResponseBody
-	public  boolean  updateArticle(HttpServletRequest request,Article article,MultipartFile file) {
-		
-		System.out.println("aarticle is  "  + article);
-		
-		String picUrl;
-		try {
-			// 处理上传文件
-			picUrl = processFile(file);
-			article.setPicture(picUrl);
-		} catch (IllegalStateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		//当前用户是文章的作者
-		User loginUser = (User)request.getSession().getAttribute(CmsContant.USER_KEY);
-		//article.setUserId(loginUser.getId());
-		int updateREsult  = articleService.update(article,loginUser.getId());
-		
-		
-		return updateREsult>0;
-		
-	}
-	
-	
-	
 }

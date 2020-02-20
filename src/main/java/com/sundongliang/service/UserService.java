@@ -4,18 +4,30 @@ import javax.validation.Valid;
 
 import com.sundongliang.entity.User;
 
-
 public interface UserService {
 
-	User getUserByUsername(String username);
-
-	int register(@Valid User user);
+	/**
+	 * 
+	 * @param username
+	 * @return
+	 */
+	User getUserName(String username);
 
 	/**
-	 * 登录操作
+	 * 
 	 * @param user
 	 * @return
 	 */
-	User login(User user);
+	int registerUser(User user);
+
+	User getUser(@Valid User user);
+
+	/**
+	 * 
+	 * @param name
+	 * @param pwd
+	 * @return
+	 */
+	User getToUser(String name, String pwd);
 
 }

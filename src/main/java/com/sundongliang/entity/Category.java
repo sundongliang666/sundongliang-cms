@@ -4,7 +4,7 @@ import org.w3c.dom.views.AbstractView;
 
 /**
  * 文章的分类
- * @author
+ * @author zhuzg
  *
  */
 public class Category extends AbstractCategory {

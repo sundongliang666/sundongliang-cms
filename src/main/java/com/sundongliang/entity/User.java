@@ -3,34 +3,41 @@ package com.sundongliang.entity;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.NotBlank;
+
 import com.sundongliang.common.Gender;
+
+
 
 public class User implements Serializable {
 
+	/**
+		 * 
+		 */
 	private static final long serialVersionUID = 7125126179260321714L;
 
 	private Integer id;
 
 	@NotBlank(message = "用户名不能为空")
 	@Size(max = 16, min = 3, message = "用户名称应该大于等于3且小于等于16")
-	private String username=null;
+	private String username;
 
-	@NotBlank(message = "用户名不能为空")
-	@Size(max = 10, min = 3, message = "用户名称应该大于等于6且小于等于10")
-	private String password=null;
+	@NotBlank(message = "密码不能为空")
+	@Size(max = 10, min = 3, message = "密码应该大于等于6且小于等于10")
+	private String password;
 
-	private String nickname;
-	private Date birthday;
+	private String nickname;//昵称
+	private Date birthday;//生日
 
-	private Gender gender;
-	private int locked;
-	private Date createTime;
-	private Date updateTime;
+	private Gender gender;//性别
+	private int locked;//身份
+	private Date createTime;//创建时间
+	private Date updateTime;//修改时间
 	private String url;// 头像的位置
 	private String score;// 积分
-	private int role; // 角色
+	private String role; // 角色
 
 	public Integer getId() {
 		return id;
@@ -120,11 +127,11 @@ public class User implements Serializable {
 		this.score = score;
 	}
 
-	public int getRole() {
+	public String getRole() {
 		return role;
 	}
 
-	public void setRole(int role) {
+	public void setRole(String role) {
 		this.role = role;
 	}
 

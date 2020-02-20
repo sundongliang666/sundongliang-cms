@@ -2,7 +2,7 @@ package com.sundongliang.entity;
 
 /**
  * 
- * @author
+ * @author zhuzg
  *
  */
 public class Channel extends AbstractCategory {

@@ -6,9 +6,11 @@
 	<div class="row" style="margin-top:50px">
 		${comment.content}
 		<br>
-		${comment.userName} 发表于 <fmt:formatDate value="${comment.created}" pattern="yyyy-MM-dd" />
+		${user.nickname==''?user.username:user.nickname}
+		<%-- <c:if test="${comment.userName==null}">游客</c:if> --%>
+		 发表于 <fmt:formatDate value="${comment.created}" pattern="yyyy-MM-dd" />
 		</div> 
-</c:forEach>  
+	</c:forEach>  
 
 <div class="row"> 
 	<nav aria-label="Page navigation example" >

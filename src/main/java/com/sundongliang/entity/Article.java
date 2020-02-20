@@ -1,16 +1,30 @@
 package com.sundongliang.entity;
 
+import java.io.Serializable;
 import java.util.Date;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 
 /**
  * 
- * @author
+ * @author zhuzg
  *
  */
-public class Article {
+@Document(indexName="sundongliang",type="cms_article")
+public class Article implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	@Id
 	private Integer id              ;
+	@Field(analyzer="ik_smart",index=true,store=true,searchAnalyzer="ik_smart",type=FieldType.text)
 	private String title           ;//标题
+	@Field(analyzer="ik_smart",index=true,store=true,searchAnalyzer="ik_smart",type=FieldType.text)
 	private String content         ;//文章的内容
 	private String picture         ;//图片的url
 	private int channelId      ;//栏目 频道
@@ -29,16 +43,6 @@ public class Article {
 	private Category  category     ; //分类
 	private User user ;
 	
-	private int complainCnt;// 投诉的数量
-	
-	public int getComplainCnt() {
-		return complainCnt;
-	}
-
-	public void setComplainCnt(int complainCnt) {
-		this.complainCnt = complainCnt;
-	}
-
 	public Integer getId() {
 		return id;
 	}
@@ -154,7 +158,7 @@ public class Article {
 				+ ", channelId=" + channelId + ", categoryId=" + categoryId + ", userId=" + userId + ", hits=" + hits
 				+ ", hot=" + hot + ", status=" + status + ", deleted=" + deleted + ", created=" + created + ", updated="
 				+ updated + ", commentCnt=" + commentCnt + ", articleType=" + articleType + ", channel=" + channel
-				+ ", category=" + category + ", user=" + user + ", complainCnt=" + complainCnt + "]";
+				+ ", category=" + category + ", user=" + user + "]";
 	}
 	@Override
 	public int hashCode() {

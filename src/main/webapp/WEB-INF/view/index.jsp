@@ -135,13 +135,14 @@
 					  <ul class="pagination ">
 					  
 					    <li class="page-item">
-					      <a class="page-link" href="/index?page=${articlePage.pageNum-1}" aria-label="Previous">
+					      <a class="page-link" href="/index?page=${articlePage.prePage==0?1:articlePage.prePage}" aria-label="Previous">
 					        <span aria-hidden="true">&laquo;</span>
 					      </a>
 					    </li>
 					    
-					    <c:forEach begin="1" end="${articlePage.pages}" varStatus="index">
-					    	
+
+					   
+					    <c:forEach begin="${articlePage.pageNum-2>=1?articlePage.pageNum-2:1}" end="${articlePage.pageNum+2>=articlePage.pages?articlePage.pages:articlePage.pageNum+2}" varStatus="index">
 					    	<!-- 当前页码的处理 -->
 					    	<c:if test="${articlePage.pageNum==index.index}">
 					    		<li class="page-item"><a class="page-link" href="javascript:void()"><font color="red"> ${index.index} </font></a>  </li>
@@ -150,12 +151,14 @@
 					  		<!-- 非当前页码的处理 -->
 							<c:if test="${articlePage.pageNum!=index.index}">
 					    		<li class="page-item"><a class="page-link" href="/index?page=${index.index}"> ${index.index}</a></li>
-					  		</c:if>
-					  
+					  		
+					    	</c:if>					  
 					    </c:forEach>
+					  
 					    
+						
 					    <li class="page-item">
-					      <a class="page-link" href="/index?page=${articlePage.pageNum+1}" aria-label="Next">
+					      <a class="page-link" href="/index?page=${articlePage.nextPage==0?articlePage.pages:articlePage.nextPage}" aria-label="Next">
 					        <span aria-hidden="true">&raquo;</span>
 					      </a>
 					    </li>
@@ -170,13 +173,13 @@
 		<!-- 右侧 -->
 		<div class="col-md-4">
 				
-				<div class="card">
+				 <div class="card">
 					  <div class="card-header">
 					    最新文章
 					  </div>
 					  <div class="card-body">
 					     <ol>
-					     	<c:forEach items="${lastArticles}" var="article" varStatus="index">
+					     	<c:forEach items="${newarticles}" var="article" varStatus="index">
 					     		<li class="ex"> ${index.index+1}. <a href="/article/detail?id=${article.id}" target="_blank" >${article.title}</a></li>
 					     	</c:forEach>
 					     	
@@ -202,6 +205,7 @@
 </div>
 
 <jsp:include page="common/footer.jsp"></jsp:include>
+
 
 
 </body>

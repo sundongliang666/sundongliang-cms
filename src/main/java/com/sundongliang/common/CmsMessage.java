@@ -2,23 +2,18 @@ package com.sundongliang.common;
 
 import java.io.Serializable;
 
-/**
- * 消息统一
- * @author
- *
- */
-public class CmsMessage implements Serializable {
-	
+public class CmsMessage implements Serializable{
+
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 3287996100097746153L;
+	private static final long serialVersionUID = 1L;
+	
+	
 	
 	int code;  // 1  是成功   2 其他原因失败
 	String error;// 失败的具体的原因
 	Object data; // 成功的情况下返回的数据内容
-	
-	
 	
 	public CmsMessage(int code, String error, Object data) {
 		super();
@@ -26,14 +21,6 @@ public class CmsMessage implements Serializable {
 		this.error = error;
 		this.data = data;
 	}
-	
-	
-	public CmsMessage() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-
-
 	public int getCode() {
 		return code;
 	}
@@ -52,9 +39,8 @@ public class CmsMessage implements Serializable {
 	public void setData(Object data) {
 		this.data = data;
 	}
-	@Override
-	public String toString() {
-		return "CmsMessage [code=" + code + ", error=" + error + ", data=" + data + "]";
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 	@Override
 	public int hashCode() {
@@ -88,8 +74,11 @@ public class CmsMessage implements Serializable {
 			return false;
 		return true;
 	}
-	
-	
+	@Override
+	public String toString() {
+		return "CmsMessage [code=" + code + ", error=" + error + ", data="
+				+ data + "]";
+	}
 	
 	
 

@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 /**
  * 
- * @author 
+ * @author zhuzg
  *
  */
 public abstract class  AbstractCategory  implements Serializable {

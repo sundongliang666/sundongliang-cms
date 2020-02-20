@@ -2,11 +2,13 @@ package com.sundongliang.common;
 
 import java.io.UnsupportedEncodingException;
 
+
+
 import org.apache.commons.codec.digest.DigestUtils;
 
 /**
  * 
- * @author 
+ * @author zhuzg
  *
  */
 public class CmsUtils {
@@ -20,18 +22,10 @@ public class CmsUtils {
 	 * @throws UnsupportedEncodingException 
 	 */
 	public static String encry(String src,String salt) {
-		return DigestUtils.md5Hex(salt + src + salt);
-		/*
-		byte[] md5 = DigestUtils.md5(salt + src + salt);
-		
-		//String enPwd = new   String(md5,"UTF-8");
-		StringBuilder sb = new StringBuilder();
-		for (byte b : md5) {
-			sb.append(b);
-		}
-		return sb.toString();
-*/		
-		
+		String md5Hex = DigestUtils.md5Hex(salt + src + salt);
+		//byte[] md5 = DigestUtils.md5(salt + src + salt);
+		return md5Hex;
+		 
 		
 	}
 }
